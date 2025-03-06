@@ -1,0 +1,19 @@
+{
+    "name": "theme",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "start": "tailwindcss build ./static/css/styles.css -o ./static/css/output.css"
+    },
+    "dependencies": {
+      "tailwindcss": "^3.0.0"
+    },
+    "devDependencies": {
+      "autoprefixer": "^10.0.0",
+      "postcss": "^8.0.0"
+    },
+    "author": "",
+    "license": "ISC"
+  }
+  
