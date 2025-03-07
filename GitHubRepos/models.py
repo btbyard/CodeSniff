@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class GitHubRepos:
+class GitHubRepos(models.Model):  # Added models.Model here:
     githubURL = models.URLField() # URL Field for the github URL ; not unique so many users can track it. 
     githubID = models.AutoField(primary_key=True) # auto incrementing id for primary key
     repositoryName = models.CharField(max_length=255) # Repo name field
