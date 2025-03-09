@@ -8,9 +8,15 @@ from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .registerForm import RegisterForm
 
+# Home View
 def home(request):
-    return render(request, 'home.html')
+    context = {
+        'repo_name': request.GET.get("repo_name", "NONE")  # Default to "NONE" if no repo is loaded
+    }
+    return render(request, 'home.html', context)
 
+
+# Register View
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -19,12 +25,13 @@ def register(request):
             user.set_password(form.cleaned_data['password'])  # Hash password
             user.save()
             messages.success(request, "Account created successfully! Please log in.")
-            return redirect("login")  # Change 'login' to your login page URL name
+            return redirect("login")  # Redirect to login page
     else:
         form = RegisterForm()
 
     return render(request, "register.html", {"form": form})
 
+# Login View
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -39,11 +46,12 @@ def login_view(request):
                 form.add_error(None, 'Invalid username or password')
     else:
         form = AuthenticationForm()
+    
+    return render(request, "login.html", {"form": form})
 
 
-# Use this function to fetch GitHub repository contents
+# Fetch GitHub Repository Contents
 # Created by Brad 3-6-25
-
 def fetch_github_repo(request):
     """Fetch list of files in the given GitHub repository"""
     github_url = request.GET.get("repo_url", "").strip()
@@ -73,6 +81,7 @@ def fetch_github_repo(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+# Fetch File Contents from GitHub
 def fetch_file_contents(request):
     """Fetch the contents of a specific file from a GitHub repository"""
     file_url = request.GET.get("file_url", "")
@@ -88,4 +97,29 @@ def fetch_file_contents(request):
         return JsonResponse({"content": response.text})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-    return render(request, "login.html", {"form": form})
+
+
+# 📌 View Coverage Page
+def view_coverage(request, repo_name):
+    """Display test coverage report for the selected repository"""
+    if "/" in repo_name:  
+        repo_name = repo_name.split("/")[-1]  # Only keep the repo name, discard the owner
+    
+    if repo_name == "NONE":
+        return redirect('home')  # Redirect to home if no repo selected
+    return render(request, 'coverage.html', {'repo_name': repo_name})
+
+# 📌 View Smells Page
+def view_smells(request, repo_name):
+    """Display code smells report for the selected repository"""
+    if repo_name == "NONE":
+        return redirect('home')  # Redirect to home if no repo selected
+    return render(request, 'smells.html', {'repo_name': repo_name})
+
+
+# 📌 All Reports Page
+def all_reports(request, repo_name):
+    """Display all reports related to the repository"""
+    if repo_name == "NONE":
+        return redirect('home')  # Redirect to home if no repo selected
+    return render(request, 'reports.html', {'repo_name': repo_name})
