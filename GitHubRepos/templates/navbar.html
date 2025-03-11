@@ -1,0 +1,32 @@
+<nav class="bg-white shadow-md py-4 px-8 w-full flex justify-between items-center">
+    <!-- Clickable Logo & Text -->
+    <a href="/" class="flex items-center space-x-3">
+        <img src="/static/images/CodeSniffLogo.png" alt="CodeSniff Logo" class="h-10 w-auto">
+        <span class="text-lg font-bold text-blue-600 hover:underline">CodeSniff</span>
+    </a>
+
+    <!-- Top Bar Navigation Links -->
+    <div class="flex space-x-6">
+        <!-- We are using sidebar links for now -->
+    </div>
+
+    <!-- Logout Button -->
+    <button onclick="logoutUser()" class="text-red-600 font-semibold hover:text-red-800">Log Out</button>
+</nav>
+
+<script>
+    function logoutUser() {
+        fetch('/logout', { method: 'POST', credentials: 'include' }) 
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/login"; // Redirect to login page
+                } else {
+                    alert("Logout failed. Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Logout error:", error);
+                alert("An error occurred while logging out.");
+            });
+    }
+</script>

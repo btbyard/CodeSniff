@@ -1,0 +1,21 @@
+{% include 'navbar.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reports - {{ repo_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center">
+    <div class="w-full max-w-4xl mt-10 flex flex-col items-center">
+        <h1 class="text-3xl font-bold text-gray-700 w-full text-center">
+            All Reports for <br> 
+            <span class="text-blue-600">{{ repo_name }}</span> Repository
+        </h1>
+        <hr class="border-gray-400 my-6 w-full">
+        <p class="text-gray-500 text-center w-full">All reports related to this repository will be displayed here...</p>
+    </div>
+</body>
+</html>
