@@ -12,4 +12,6 @@ urlpatterns = [
     path('coverage/<str:repo_name>/', views.view_coverage, name='view_coverage'), # View coverage page
     path('smells/<str:repo_name>/', views.view_smells, name='view_smells'), # View smells page
     path('reports/<str:repo_name>/', views.all_reports, name='all_reports'), # View all reports page
+    path('analyze-coverage/', views.analyze_coverage, name='analyze_coverage'), # API endpoint to analyze the code coverage of the repo
+    path('api/coverage/<str:repo_name>/', views.get_coverage_data, name='get_coverage_data'),
 ]

@@ -6,7 +6,7 @@ class GitHubRepos(models.Model):  # Added models.Model here:
     githubURL = models.URLField() # URL Field for the github URL ; not unique so many users can track it. 
     githubID = models.AutoField(primary_key=True) # auto incrementing id for primary key
     repositoryName = models.CharField(max_length=255) # Repo name field
-    user = models.ForeignKey(User, on_delete=models.CASCADE) # which user it is connected to
+    users = models.ManyToManyField(User) # which users it is connected to
 
 class CodeSmellResult(models.Model):
     gitHubRepo = models.OneToOneField(GitHubRepos, on_delete=models.CASCADE) # Relation for mapping repo to the smell results

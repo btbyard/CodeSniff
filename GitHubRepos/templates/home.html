@@ -104,7 +104,9 @@
                 }
                 repoUrl = inputRepoUrl;
             }
-        
+            
+            sendRepoDataToBackend(repoUrl);
+
             // Extract repository name
             let repoName = extractRepoName(repoUrl);
             if (!repoName) {
@@ -211,6 +213,19 @@
             document.getElementById("fileModal").classList.add("hidden");
             document.getElementById("overlay").classList.add("hidden");
         }
+
+        function sendRepoDataToBackend(repoUrl) {
+            fetch(`/analyze-coverage/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    repo_url: repoUrl,  // Only send the repo URL, not individual files
+                }),
+            });
+        }
+
     </script>
 
 </body>
