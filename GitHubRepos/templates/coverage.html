@@ -106,50 +106,56 @@
     }
 
     function fetchFileContent(fileUrl, fileName, coveredLines = [], missedLines = []) {
-        if (!fileUrl) {
-            alert("File URL not found.");
-            return;
-        }
-        fetch(fileUrl)
-            .then(response => response.text())
-            .then(content => {
-                const fileLines = content.split("\n");
+    if (!fileUrl) {
+        alert("File URL not found.");
+        return;
+    }
 
-                let highlightedContent = "";
-                fileLines.forEach((line, index) => {
-                    const lineNumber = index + 1;
-                    let lineClass = "";
+    fetch(fileUrl)
+        .then(response => response.json())
+        .then(data => {
+            const content = atob(data.content);
 
-                    if (coveredLines.includes(lineNumber.toString())) {
-                        lineClass = "bg-green-200"; // Covered line (Green)
-                    } else if (missedLines.includes(lineNumber.toString())) {
-                        lineClass = "bg-red-200"; // Missed line (Red)
-                    }
+            const fileLines = content.split("\n");
+            let highlightedContent = "";
 
-                    highlightedContent += `<div class="px-4 py-1 ${lineClass}"><span class="text-gray-500 mr-2">${lineNumber}</span>${escapeHtml(line)}</div>`;
-                });
+            fileLines.forEach((line, index) => {
+                const lineNumber = index + 1;
+                let lineClass = "";
 
-                document.getElementById("modalTitle").textContent = fileName;
-                document.getElementById("fileContent").innerHTML = highlightedContent;
-                document.getElementById("fileModal").classList.remove("hidden");
-                document.getElementById("overlay").classList.remove("hidden");
-            })
-            .catch(error => {
-                alert('Error fetching file content: ' + error);
+                if (coveredLines.includes(lineNumber.toString())) {
+                    lineClass = "bg-green-200";
+                } else if (missedLines.includes(lineNumber.toString())) {
+                    lineClass = "bg-red-200";
+                }
+
+                highlightedContent += `<div class="px-4 py-1 ${lineClass}"><span class="text-gray-500 mr-2">${lineNumber}</span>${escapeHtml(line)}</div>`;
             });
-    }
 
-    function escapeHtml(text) {
-        return text.replace(/[&<>"']/g, function (m) {
-            return {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-            }[m];
+            document.getElementById("modalTitle").textContent = fileName;
+
+            document.getElementById("fileContent").innerHTML = highlightedContent;
+
+            document.getElementById("fileModal").classList.remove("hidden");
+            document.getElementById("overlay").classList.remove("hidden");
+        })
+        .catch(error => {
+            alert('Error fetching file content: ' + error);
         });
-    }
+}
+
+function escapeHtml(text) {
+    // Escape special HTML characters
+    return text.replace(/[&<>"']/g, function (m) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[m];
+    });
+}
 
     function closeModal() {
         document.getElementById("fileModal").classList.add("hidden");

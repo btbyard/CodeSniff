@@ -129,43 +129,6 @@ def get_coverage_data(request, repo_name):
         coverage_file = coverage_result.codeCoverageFile
         gitHubRepo = coverage_result.gitHubRepo  # Get the related GitHub repo object
 
-        parsed_url = urlparse(gitHubRepo.githubURL)
-        path_parts = parsed_url.path.strip("/").split("/")
-
-        if len(path_parts) < 2:
-            return JsonResponse({"error": "Invalid GitHub repository URL"}, status=400)
-
-        owner, repo = path_parts[:2]
-
-        # Fetch repository file structure from GitHub API
-        api_url = f"https://api.github.com/repos/{owner}/{repo}/contents"
-        response = requests.get(api_url)
-        if response.status_code != 200:
-            return JsonResponse({"error": "Failed to fetch repository structure from GitHub."}, status=500)
-
-        repo_files = response.json()
-
-        def find_file_path(repo_files, file_name):
-            """Recursively search for the file path in the repo structure."""
-            for file in repo_files:
-                if isinstance(file, dict):  # Ensure it's a dictionary
-                    if file.get('name') == file_name:
-                        return file.get('path')
-                    elif file.get('type') == 'dir':
-                        sub_dir_files = requests.get(file['url']).json()
-                        file_path = find_file_path(sub_dir_files, file_name)
-                        if file_path:
-                            return file_path
-            return None
-
-
-        # Get default branch
-        repo_info_url = f"https://api.github.com/repos/{owner}/{repo}"
-        repo_info_response = requests.get(repo_info_url)
-        default_branch = "main"  # Fallback to "main" if the API doesn't return the default branch
-        if repo_info_response.status_code == 200:
-            default_branch = repo_info_response.json().get("default_branch", "main")
-
         # Parse the XML coverage file
         tree = ET.parse(coverage_file)
         root = tree.getroot()
@@ -178,9 +141,12 @@ def get_coverage_data(request, repo_name):
             lines_covered = int(file_element.get("lines_covered"))
             lines_missed = int(file_element.get("lines_missed"))
             total_lines = int(file_element.get("total_lines"))
+            full_path = file_element.get("full_path")  # Get the full path directly from the XML
 
-            file_path = find_file_path(repo_files, file_name)
-            download_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{default_branch}/{file_path}" if file_path else None
+            # Construct the API URL to fetch the file from the GitHub repository
+            owner = gitHubRepo.githubURL.split("/")[3]  # Extract owner from the GitHub URL
+            repo = gitHubRepo.repositoryName  # The repository name is already stored
+            download_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{full_path}"
 
             # Collect and format coverage data
             coverage_data.append({
@@ -273,7 +239,7 @@ def analyze_coverage(request):
             coverage_file = os.path.join(repo_path, "coverage.xml")
             simplified_file = os.path.join(repo_path, "simplified_coverage.xml")
 
-            simplify_coverage_report(coverage_file, simplified_file)
+            simplify_coverage_report(coverage_file, simplified_file, repo_path)
 
             with open(simplified_file, "r") as f:
                 coverage_xml_content = f.read()
@@ -333,7 +299,14 @@ def install_from_imports(repo_path, venv_path):
     # Install coverage and pytest (if they're not already in the requirements file)
     subprocess.run([pip_exec, "install", "coverage", "pytest"], check=True)
 
-def simplify_coverage_report(input_file, output_file):
+def find_file_in_repo(repo_path, file_name):
+    """Recursively search for the file in the cloned repo directory and return its relative path."""
+    for root, dirs, files in os.walk(repo_path):
+        if file_name in files:
+            return os.path.relpath(os.path.join(root, file_name), repo_path)
+    return None  # Return None if the file is not found
+
+def simplify_coverage_report(input_file, output_file, repo_path):
     tree = ET.parse(input_file)
     root = tree.getroot()
 
@@ -355,7 +328,11 @@ def simplify_coverage_report(input_file, output_file):
     # Iterate over each class (file) and extract coverage information
     for class_element in root.findall(".//class"):
         file_name = class_element.get("filename", "unknown")
-        file_name = os.path.basename(file_name)
+
+        # Find the full path to the file by searching the cloned repo directory
+        file_base_name = os.path.basename(file_name)
+        full_file_path = find_file_in_repo(repo_path, file_base_name)
+
         file_line_rate = float(class_element.get("line-rate", "0")) * 100
 
         # Collect lines covered and missed by this file
@@ -371,11 +348,12 @@ def simplify_coverage_report(input_file, output_file):
 
         # Create a file element under the root with the filename and its coverage
         file_element = ET.SubElement(simplified_root, "file", {
-            "name": file_name,
+            "name": file_base_name,
             "coverage": f"{file_line_rate:.2f}%",
             "lines_covered": str(len(lines_covered_list)),
             "lines_missed": str(len(lines_missed_list)),
-            "total_lines": str(len(class_element.findall("lines/line")))
+            "total_lines": str(len(class_element.findall("lines/line"))),
+            "full_path": full_file_path  # Add the full path as an attribute
         })
 
         # Add covered lines under the <covered_lines> element
