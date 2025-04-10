@@ -192,10 +192,15 @@ def parse_coverage_xml(file_path, url):
 
 # 📌 View Smells Page
 def view_smells(request, repo_name):
-    """Display code smells report for the selected repository"""
+    """Render the smell report dashboard view"""
+    if "/" in repo_name:  
+        repo_name = repo_name.split("/")[-1]
+    
     if repo_name == "NONE":
-        return redirect('home')  # Redirect to home if no repo selected
-    return render(request, 'smells.html', {'repo_name': repo_name})
+        return redirect('home')
+
+    return render(request, "smells.html", {"repo_name": repo_name})
+
 
 
 # 📌 All Reports Page
@@ -228,9 +233,12 @@ def analyze_coverage(request):
             git.Repo.clone_from(repo_url, repo_path)  # Clone repo
 
             venv_path = os.path.join(repo_path, "venv")
+            print("VENV PATH:", venv_path)
             create_virtualenv(venv_path)
 
             install_from_imports(repo_path, venv_path)
+            
+           
 
             python_exec = os.path.join(venv_path, "Scripts" if os.name == "nt" else "bin", "python")
             subprocess.run([python_exec, "-m", "coverage", "run", "-m", "--source", repo_name, "pytest"], cwd=repo_path, check=True)
@@ -258,8 +266,44 @@ def analyze_coverage(request):
                 defaults={"codeCoverageFile": ContentFile(coverage_xml_content, name=f"{repo_name}_coverage.xml")}
             )
             coverage_result.save()
+            print("🧪 python_exec =", python_exec)
+            print("repo path", repo_path, repo_name)
+            
+            # smell_result = CodeSmellResult.objects.filter(gitHubRepo=repo).first()
 
-            return JsonResponse({"message": "Coverage analysis completed", "coverage_id": coverage_result.id})
+            # # If there is an existing result, delete the old file
+            # if smell_result:
+            #     old_file_path = smell_result.codeSmellFile.path
+            #     if os.path.exists(old_file_path):
+            #         os.remove(old_file_path)
+            try: 
+                
+                pylint_cmd = [python_exec, "-m", "pylint", "*.py", "--output-format=json"]
+                pylint_proc = subprocess.run(pylint_cmd, capture_output=True, text=True,  cwd=repo_path)
+                
+                pylint_output = pylint_proc.stdout
+                
+                
+                smell_result, created = CodeSmellResult.objects.update_or_create(gitHubRepo=repo, defaults={"codeSmellFile": ContentFile(pylint_output, name=f"{repo_name}_smells.json")}); smell_result.save() 
+            except subprocess.CalledProcessError as e: 
+                print("Pylint failed to run"); print("stdout:", e.stdout[:300]); 
+                print("stderr:", e.stderr[:300]); 
+                return JsonResponse({"error": "Pylint analysis failed", "stderr": e.stderr}, status=500) 
+            
+            except Exception as e: 
+                import traceback; traceback.print_exc(); 
+                return JsonResponse({"error": f"Failed to save smell report: {str(e)}"}, status=500)
+        
+  
+            try:
+                pylint_results = json.loads(pylint_output)
+            except json.JSONDecodeError:
+                pylint_results = []
+
+            return JsonResponse({
+                "message": "Coverage and code smell analysis completed",
+                "smells": pylint_results
+            })
 
         except git.exc.GitCommandError as e:
             return JsonResponse({"error": f"Git error: {str(e)}"}, status=500)
@@ -268,6 +312,27 @@ def analyze_coverage(request):
         except Exception as e:
             return JsonResponse({"error": f"Unexpected error: {str(e)}"}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=400)
+
+def get_smell_data(request, repo_name):
+    try:
+        smell_result = CodeSmellResult.objects.get(gitHubRepo__repositoryName=repo_name)
+        print("🔍 Smell file path:", smell_result.codeSmellFile.path)
+
+        with open(smell_result.codeSmellFile.path, "r") as f:
+         data = json.load(f)
+         print("📦 Pylint smell data:", json.dumps(data[:3], indent=2)) 
+        print("inside get smell data")
+        report_file = smell_result.codeSmellFile
+
+        with open(report_file.path, "r") as f:
+            pylint_data = json.load(f)
+
+        return JsonResponse(pylint_data, safe=False)
+
+    except CodeSmellResult.DoesNotExist:
+        return JsonResponse({"error": "Smell data not found for this repository."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": f"Unexpected error: {str(e)}"}, status=500)
 
 def create_github_repo(url, repoName, user):
     try:
@@ -298,6 +363,8 @@ def install_from_imports(repo_path, venv_path):
 
     # Install coverage and pytest (if they're not already in the requirements file)
     subprocess.run([pip_exec, "install", "coverage", "pytest"], check=True)
+    subprocess.run([pip_exec, "install", "pylint"], check=True)
+
 
 def find_file_in_repo(repo_path, file_name):
     """Recursively search for the file in the cloned repo directory and return its relative path."""

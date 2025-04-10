@@ -9,9 +9,9 @@ class GitHubRepos(models.Model):  # Added models.Model here:
     users = models.ManyToManyField(User) # which users it is connected to
 
 class CodeSmellResult(models.Model):
-    gitHubRepo = models.OneToOneField(GitHubRepos, on_delete=models.CASCADE) # Relation for mapping repo to the smell results
-    codeSmellFile = models.FileField(upload_to='code_smell_results/') # File upload location for the results (Assuming XML Format possibly). Mby use XML tree to generate and read the results
-
+    gitHubRepo = models.OneToOneField(GitHubRepos, on_delete=models.CASCADE)
+    codeSmellFile = models.FileField(upload_to='code_smell_results/')
+    
 class CodeCoverageResult(models.Model):
     gitHubRepo = models.OneToOneField(GitHubRepos, on_delete=models.CASCADE) # Relation for mapping repo to the smell results
     codeCoverageFile = models.FileField(upload_to='coverage_results/') # File upload locations for the results (Assuming XML Format possibly). Mby use XML tree to generate and read the results

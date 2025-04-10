@@ -1,5 +1,5 @@
 <coverage total_coverage="100.00%" total_lines_covered="1908" total_lines_missed="0" total_lines="1908">
-  <file name="__init__.py" coverage="100.00%" lines_covered="8" lines_missed="0" total_lines="8" full_path="src\packaging\__init__.py">
+  <file name="__init__.py" coverage="100.00%" lines_covered="8" lines_missed="0" total_lines="8" full_path="tasks/__init__.py">
     <covered_lines>
       <line_covered>5</line_covered>
       <line_covered>6</line_covered>
@@ -12,7 +12,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_elffile.py" coverage="100.00%" lines_covered="54" lines_missed="0" total_lines="54" full_path="src\packaging\_elffile.py">
+  <file name="_elffile.py" coverage="100.00%" lines_covered="54" lines_missed="0" total_lines="54" full_path="venv/lib/python3.12/site-packages/packaging/_elffile.py">
     <covered_lines>
       <line_covered>11</line_covered>
       <line_covered>13</line_covered>
@@ -71,7 +71,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_manylinux.py" coverage="100.00%" lines_covered="126" lines_missed="0" total_lines="126" full_path="src\packaging\_manylinux.py">
+  <file name="_manylinux.py" coverage="100.00%" lines_covered="126" lines_missed="0" total_lines="126" full_path="venv/lib/python3.12/site-packages/packaging/_manylinux.py">
     <covered_lines>
       <line_covered>1</line_covered>
       <line_covered>3</line_covered>
@@ -202,7 +202,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_musllinux.py" coverage="100.00%" lines_covered="36" lines_missed="0" total_lines="36" full_path="src\packaging\_musllinux.py">
+  <file name="_musllinux.py" coverage="100.00%" lines_covered="36" lines_missed="0" total_lines="36" full_path="venv/lib/python3.12/site-packages/packaging/_musllinux.py">
     <covered_lines>
       <line_covered>7</line_covered>
       <line_covered>9</line_covered>
@@ -243,7 +243,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_parser.py" coverage="100.00%" lines_covered="175" lines_missed="0" total_lines="175" full_path="src\packaging\_parser.py">
+  <file name="_parser.py" coverage="100.00%" lines_covered="175" lines_missed="0" total_lines="175" full_path="venv/lib/python3.12/site-packages/packaging/_parser.py">
     <covered_lines>
       <line_covered>7</line_covered>
       <line_covered>9</line_covered>
@@ -423,7 +423,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_structures.py" coverage="100.00%" lines_covered="36" lines_missed="0" total_lines="36" full_path="src\packaging\_structures.py">
+  <file name="_structures.py" coverage="100.00%" lines_covered="36" lines_missed="0" total_lines="36" full_path="venv/lib/python3.12/site-packages/packaging/_structures.py">
     <covered_lines>
       <line_covered>6</line_covered>
       <line_covered>7</line_covered>
@@ -464,7 +464,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_tokenizer.py" coverage="100.00%" lines_covered="65" lines_missed="0" total_lines="65" full_path="src\packaging\_tokenizer.py">
+  <file name="_tokenizer.py" coverage="100.00%" lines_covered="65" lines_missed="0" total_lines="65" full_path="venv/lib/python3.12/site-packages/packaging/_tokenizer.py">
     <covered_lines>
       <line_covered>1</line_covered>
       <line_covered>3</line_covered>
@@ -534,7 +534,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="markers.py" coverage="100.00%" lines_covered="136" lines_missed="0" total_lines="136" full_path="src\packaging\markers.py">
+  <file name="markers.py" coverage="100.00%" lines_covered="136" lines_missed="0" total_lines="136" full_path="venv/lib/python3.12/site-packages/packaging/markers.py">
     <covered_lines>
       <line_covered>5</line_covered>
       <line_covered>7</line_covered>
@@ -675,7 +675,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="metadata.py" coverage="100.00%" lines_covered="364" lines_missed="0" total_lines="364" full_path="src\packaging\metadata.py">
+  <file name="metadata.py" coverage="100.00%" lines_covered="364" lines_missed="0" total_lines="364" full_path="venv/lib/python3.12/site-packages/packaging/metadata.py">
     <covered_lines>
       <line_covered>1</line_covered>
       <line_covered>3</line_covered>
@@ -1044,7 +1044,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="requirements.py" coverage="100.00%" lines_covered="45" lines_missed="0" total_lines="45" full_path="src\packaging\requirements.py">
+  <file name="requirements.py" coverage="100.00%" lines_covered="45" lines_missed="0" total_lines="45" full_path="venv/lib/python3.12/site-packages/packaging/requirements.py">
     <covered_lines>
       <line_covered>4</line_covered>
       <line_covered>6</line_covered>
@@ -1094,7 +1094,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="specifiers.py" coverage="100.00%" lines_covered="244" lines_missed="0" total_lines="244" full_path="src\packaging\specifiers.py">
+  <file name="specifiers.py" coverage="100.00%" lines_covered="244" lines_missed="0" total_lines="244" full_path="venv/lib/python3.12/site-packages/packaging/specifiers.py">
     <covered_lines>
       <line_covered>11</line_covered>
       <line_covered>13</line_covered>
@@ -1343,7 +1343,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="tags.py" coverage="100.00%" lines_covered="302" lines_missed="0" total_lines="302" full_path="src\packaging\tags.py">
+  <file name="tags.py" coverage="100.00%" lines_covered="302" lines_missed="0" total_lines="302" full_path="venv/lib/python3.12/site-packages/packaging/tags.py">
     <covered_lines>
       <line_covered>5</line_covered>
       <line_covered>7</line_covered>
@@ -1650,7 +1650,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="utils.py" coverage="100.00%" lines_covered="72" lines_missed="0" total_lines="72" full_path="src\packaging\utils.py">
+  <file name="utils.py" coverage="100.00%" lines_covered="72" lines_missed="0" total_lines="72" full_path="venv/lib/python3.12/site-packages/astroid/nodes/utils.py">
     <covered_lines>
       <line_covered>5</line_covered>
       <line_covered>7</line_covered>
@@ -1727,7 +1727,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="version.py" coverage="100.00%" lines_covered="173" lines_missed="0" total_lines="173" full_path="src\packaging\version.py">
+  <file name="version.py" coverage="100.00%" lines_covered="173" lines_missed="0" total_lines="173" full_path="venv/lib/python3.12/site-packages/packaging/version.py">
     <covered_lines>
       <line_covered>10</line_covered>
       <line_covered>12</line_covered>
@@ -1905,7 +1905,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="__init__.py" coverage="100.00%" lines_covered="61" lines_missed="0" total_lines="61" full_path="src\packaging\__init__.py">
+  <file name="__init__.py" coverage="100.00%" lines_covered="61" lines_missed="0" total_lines="61" full_path="tasks/__init__.py">
     <covered_lines>
       <line_covered>32</line_covered>
       <line_covered>34</line_covered>
@@ -1971,7 +1971,7 @@
     </covered_lines>
     <missed_lines />
   </file>
-  <file name="_spdx.py" coverage="100.00%" lines_covered="11" lines_missed="0" total_lines="11" full_path="src\packaging\licenses\_spdx.py">
+  <file name="_spdx.py" coverage="100.00%" lines_covered="11" lines_missed="0" total_lines="11" full_path="venv/lib/python3.12/site-packages/packaging/licenses/_spdx.py">
     <covered_lines>
       <line_covered>2</line_covered>
       <line_covered>4</line_covered>
