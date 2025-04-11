@@ -21,6 +21,9 @@ import os
 from .models import *
 import xml.etree.ElementTree as ET
 import pipreqs
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+
 
 # Home View
 def home(request):
@@ -201,14 +204,60 @@ def view_smells(request, repo_name):
 
     return render(request, "smells.html", {"repo_name": repo_name})
 
-
-
 # 📌 All Reports Page
-def all_reports(request, repo_name):
-    """Display all reports related to the repository"""
-    if repo_name == "NONE":
-        return redirect('home')  # Redirect to home if no repo selected
-    return render(request, 'reports.html', {'repo_name': repo_name})
+def all_report(request):
+    # Fetch all repositories from the database
+    all_repos = GitHubRepos.objects.all()
+
+    # Get the list of selected repositories from the request (if any)
+    selected_repos = request.GET.getlist('repos') or [repo.repositoryName for repo in all_repos]
+
+    all_reports = []
+
+    for repo_name in selected_repos:
+        # Coverage Data
+        try:
+            coverage_response = get_coverage_data(request, repo_name)
+            coverage_data = json.loads(coverage_response.content)  # Ensure JSON parsing
+            average_coverage = (
+                sum(file.get("coverage_percent", 0) for file in coverage_data) / len(coverage_data)
+                if coverage_data else 0
+            )
+        except Exception as e:
+            print(f"Coverage error for {repo_name}: {e}")
+            average_coverage = 0
+
+        # Smell Data
+        try:
+            repo = GitHubRepos.objects.get(repositoryName=repo_name)
+            smell_result = CodeSmellResult.objects.get(gitHubRepo=repo)
+            if smell_result.codeSmellFile and smell_result.codeSmellFile.path:
+                with open(smell_result.codeSmellFile.path, 'r') as file:
+                    smell_data = json.load(file)
+                smell_count = len(smell_data)
+            else:
+                smell_count = 0
+        except Exception as e:
+            print(f"Smell error for {repo_name}: {e}")
+            smell_count = 0
+
+        all_reports.append({
+            "repo": repo_name,
+            "coverage": average_coverage,
+            "smells": smell_count,
+        })
+
+    context = {
+        "chart_data": json.dumps(all_reports),
+        "all_repos": all_repos,  # Pass all repositories for checkboxes
+        "selected_repos": selected_repos,  # Keep track of selected repos
+        
+    }
+
+    return render(request, "reports_new.html", context)
+    
+
+
 
 @csrf_exempt
 def analyze_coverage(request):

@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/coverage/<str:repo_name>/', views.get_coverage_data, name='get_coverage_data'),
     path("smells/<str:repo_name>/", view_smells, name="view_smells"),
     path("api/smells/<str:repo_name>/", views.get_smell_data, name="get_smell_data"),
+    path('reports/', views.all_report, name='all_report')
 ]
