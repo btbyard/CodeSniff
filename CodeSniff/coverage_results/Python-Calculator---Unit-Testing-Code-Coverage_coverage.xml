@@ -1,0 +1,28 @@
+<coverage total_coverage="100.00%" total_lines_covered="21" total_lines_missed="0" total_lines="21">
+  <file name="calculator.py" coverage="100.00%" lines_covered="21" lines_missed="0" total_lines="21" full_path="calculator_project\calculator.py">
+    <covered_lines>
+      <line_covered>11</line_covered>
+      <line_covered>14</line_covered>
+      <line_covered>20</line_covered>
+      <line_covered>22</line_covered>
+      <line_covered>23</line_covered>
+      <line_covered>24</line_covered>
+      <line_covered>26</line_covered>
+      <line_covered>28</line_covered>
+      <line_covered>29</line_covered>
+      <line_covered>30</line_covered>
+      <line_covered>32</line_covered>
+      <line_covered>34</line_covered>
+      <line_covered>35</line_covered>
+      <line_covered>36</line_covered>
+      <line_covered>38</line_covered>
+      <line_covered>45</line_covered>
+      <line_covered>46</line_covered>
+      <line_covered>47</line_covered>
+      <line_covered>49</line_covered>
+      <line_covered>50</line_covered>
+      <line_covered>51</line_covered>
+    </covered_lines>
+    <missed_lines />
+  </file>
+</coverage>

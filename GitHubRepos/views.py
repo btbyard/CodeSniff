@@ -286,11 +286,9 @@ def analyze_coverage(request):
             create_virtualenv(venv_path)
 
             install_from_imports(repo_path, venv_path)
-            
-           
 
             python_exec = os.path.join(venv_path, "Scripts" if os.name == "nt" else "bin", "python")
-            subprocess.run([python_exec, "-m", "coverage", "run", "-m", "--source", repo_name, "pytest"], cwd=repo_path, check=True)
+            subprocess.run([python_exec, "-m", "coverage", "run", "-m", '--omit="*/test/*,*/tests/*",test*.py,*test.py', "pytest"], cwd=repo_path, check=True)
             subprocess.run([python_exec, "-m", "coverage", "xml"], cwd=repo_path, check=True)
 
             coverage_file = os.path.join(repo_path, "coverage.xml")
