@@ -11,10 +11,8 @@ Features:
 
 1. Clone the repository
 
-```bash
 git clone https://github.com/yourusername/codesniff.git
 cd codesniff
-
 
 
 2. Install dependencies
@@ -30,13 +28,14 @@ pipreqs
 
 
 ## Database Setup
+sqliteUses SQLite (default with Django)
+Run the following to set up the database:
+  python manage.py makemigrations  
+  python manage.py migrate
 
 
 ## Configuration
 settings.py handles environment configuration.
-add your api secret key in settings.py
-  SECRET_KEY=your-secret-key
-
 
 
 ## Running the Server
