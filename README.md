@@ -39,7 +39,7 @@ settings.py handles environment configuration.
 
 
 ## Running the Server
-python manage.py runserver
+Run this command: "python manage.py runserver"
 Visit: http://127.0.0.1:8000
 
 
