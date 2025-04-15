@@ -8,6 +8,7 @@ urlpatterns = [
     path('home', views.home, name='home'),  
     path('register/', views.register, name='register'),  # Register page view
     path('login/', views.login_view, name='login'),  # Login page view
+    path('logout/', views.logout_user, name='logout_user'),  # Logout page view
     path('fetch-github/', fetch_github_repo, name='fetch_github'),  # Fetch GitHub Repo API
     path('fetch-file/', fetch_file_contents, name='fetch_file'),  # New endpoint for file contents
     path('coverage/<str:repo_name>/', views.view_coverage, name='view_coverage'), # View coverage page

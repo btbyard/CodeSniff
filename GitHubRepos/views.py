@@ -23,9 +23,12 @@ import xml.etree.ElementTree as ET
 import pipreqs
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
-
-# Home View
+# Home View and require login
+@login_required(login_url='/login')
 def home(request):
     context = {
         'repo_name': request.GET.get("repo_name", "NONE")  # Default to "NONE" if no repo is loaded
@@ -65,6 +68,14 @@ def login_view(request):
         form = AuthenticationForm()
 
     return render(request, "login.html", {"form": form})
+
+@csrf_exempt
+def logout_user(request):
+    if request.method == "POST":
+        logout(request)
+        return JsonResponse({"message": "Logged out successfully"})
+    return JsonResponse({"error": "Invalid request"}, status=405)
+    
 
 # Fetch GitHub Repository Contents
 # Created by Brad 3-6-25

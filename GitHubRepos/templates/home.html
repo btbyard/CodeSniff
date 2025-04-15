@@ -46,6 +46,14 @@
 
         <!-- Main Content Section -->
         <div class="w-2/3 flex flex-col items-center">
+
+            <div class="w-3/4 mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Recently Analyzed Repos</h3>
+                <ul id="recentRepos" class="list-disc list-inside text-blue-700 underline space-y-1">
+                    <!-- JS will populate this -->
+                </ul>
+            </div>
+
             <h2 class="text-2xl italic text-gray-700 mt-4">Begin Here with your Git Repository</h2>
 
             <div class="mt-4 w-3/4">
@@ -177,6 +185,14 @@
                     repoNameElement.textContent = "NONE";
                     repoContainer.classList.add("hidden"); // Hide repository section
                 });
+
+                 // Store last 3 repo URLs
+                 let history = JSON.parse(localStorage.getItem("repoHistory")) || [];
+                 history = history.filter(url => url !== repoUrl); // Remove duplicates
+                 history.unshift(repoUrl);                         // Add to top
+                 if (history.length > 3) history = history.slice(0, 3); // Keep only last 3
+                 localStorage.setItem("repoHistory", JSON.stringify(history));
+                 localStorage.setItem("lastRepoUrl", repoUrl); // Keep this if you still want to load last one by default
         }
 
         // Helper function to extract the repository name from the URL
@@ -225,6 +241,35 @@
                 }),
             });
         }
+
+        // Load saved GitHub repo on page load (if available)
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedRepoUrl = localStorage.getItem("lastRepoUrl");
+            if (savedRepoUrl) {
+                fetchRepo(savedRepoUrl);
+            }
+            // Render the last 3 repositories from local storage
+            renderRecentRepos();
+        });
+
+        // Display the last 3 repositories in the list
+        function renderRecentRepos() {
+            const history = JSON.parse(localStorage.getItem("repoHistory")) || [];
+            const recentList = document.getElementById("recentRepos");
+
+            if (!recentList) return;
+
+            // Clear old list items
+            recentList.innerHTML = "";
+
+            history.forEach(url => {
+                const li = document.createElement("li");
+                const repoName = extractRepoName(url);
+                li.innerHTML = `<a href="#" onclick="fetchRepo('${url}')">${repoName}</a>`;
+                recentList.appendChild(li);
+            });
+        }
+
 
     </script>
 

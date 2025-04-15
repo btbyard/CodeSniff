@@ -1,6 +1,6 @@
 <nav class="bg-white shadow-md py-4 px-8 w-full flex justify-between items-center">
     <!-- Clickable Logo & Text -->
-    <a href="/" class="flex items-center space-x-3">
+    <a href="/home" class="flex items-center space-x-3">
         <img src="/static/images/CodeSniffLogo.png" alt="CodeSniff Logo" class="h-10 w-auto">
         <span class="text-lg font-bold text-blue-600 hover:underline">CodeSniff</span>
     </a>
@@ -16,7 +16,7 @@
 
 <script>
     function logoutUser() {
-        fetch('/logout', { method: 'POST', credentials: 'include' }) 
+        fetch('/logout/', { method: 'POST', credentials: 'include' }) 
             .then(response => {
                 if (response.ok) {
                     window.location.href = "/login"; // Redirect to login page
