@@ -4,7 +4,8 @@ from .views import get_smell_data, register, view_smells
 from .views import fetch_github_repo, fetch_file_contents  # Import from the same app
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Home page view
+    path('', views.login_view, name='login'),  
+    path('home', views.home, name='home'),  
     path('register/', views.register, name='register'),  # Register page view
     path('login/', views.login_view, name='login'),  # Login page view
     path('fetch-github/', fetch_github_repo, name='fetch_github'),  # Fetch GitHub Repo API

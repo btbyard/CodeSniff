@@ -316,13 +316,7 @@ def analyze_coverage(request):
             print("🧪 python_exec =", python_exec)
             print("repo path", repo_path, repo_name)
             
-            # smell_result = CodeSmellResult.objects.filter(gitHubRepo=repo).first()
-
-            # # If there is an existing result, delete the old file
-            # if smell_result:
-            #     old_file_path = smell_result.codeSmellFile.path
-            #     if os.path.exists(old_file_path):
-            #         os.remove(old_file_path)
+           
             try: 
                 
                 pylint_cmd = [python_exec, "-m", "pylint", "*.py", "--output-format=json"]
@@ -330,7 +324,13 @@ def analyze_coverage(request):
                 
                 pylint_output = pylint_proc.stdout
                 
-                
+                smell_result = CodeSmellResult.objects.filter(gitHubRepo=repo).first()
+
+                if smell_result:
+                 old_file_path = smell_result.codeSmellFile.path
+                 if os.path.exists(old_file_path):
+                   os.remove(old_file_path)
+                   
                 smell_result, created = CodeSmellResult.objects.update_or_create(gitHubRepo=repo, defaults={"codeSmellFile": ContentFile(pylint_output, name=f"{repo_name}_smells.json")}); smell_result.save() 
             except subprocess.CalledProcessError as e: 
                 print("Pylint failed to run"); print("stdout:", e.stdout[:300]); 
