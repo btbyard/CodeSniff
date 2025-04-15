@@ -324,13 +324,9 @@ def analyze_coverage(request):
                 defaults={"codeCoverageFile": ContentFile(coverage_xml_content, name=f"{repo_name}_coverage.xml")}
             )
             coverage_result.save()
-            print("🧪 python_exec =", python_exec)
-            print("repo path", repo_path, repo_name)
-            
            
             try: 
-                
-                pylint_cmd = [python_exec, "-m", "pylint", "*.py", "--output-format=json"]
+                pylint_cmd = [python_exec, "-m", "pylint", "./*/*.py", "--output-format=json"]
                 pylint_proc = subprocess.run(pylint_cmd, capture_output=True, text=True,  cwd=repo_path)
                 
                 pylint_output = pylint_proc.stdout

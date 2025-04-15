@@ -1,15 +1,15 @@
 [
     {
-        "type": "fatal",
-        "module": "*.py",
+        "type": "convention",
+        "module": "calculator",
         "obj": "",
-        "line": 1,
+        "line": 48,
         "column": 0,
         "endLine": null,
         "endColumn": null,
-        "path": "*.py",
-        "symbol": "fatal",
-        "message": "No module named *.py",
-        "message-id": "F0001"
+        "path": "calculator_project/calculator.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
     }
 ]

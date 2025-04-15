@@ -1,0 +1,6 @@
+<coverage total_coverage="100.00%" total_lines_covered="0" total_lines_missed="0" total_lines="0">
+  <file name="__init__.py" coverage="100.00%" lines_covered="0" lines_missed="0" total_lines="0" full_path="tasks/__init__.py">
+    <covered_lines />
+    <missed_lines />
+  </file>
+</coverage>

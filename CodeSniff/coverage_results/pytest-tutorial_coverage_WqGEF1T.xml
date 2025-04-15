@@ -1,0 +1,135 @@
+<coverage total_coverage="95.88%" total_lines_covered="93" total_lines_missed="0" total_lines="93">
+  <file name="__init__.py" coverage="100.00%" lines_covered="0" lines_missed="0" total_lines="0" full_path="tests/__init__.py">
+    <covered_lines />
+    <missed_lines />
+  </file>
+  <file name="energy.py" coverage="96.55%" lines_covered="28" lines_missed="1" total_lines="29" full_path="src/energy.py">
+    <covered_lines>
+      <line_covered>1</line_covered>
+      <line_covered>2</line_covered>
+      <line_covered>3</line_covered>
+      <line_covered>4</line_covered>
+      <line_covered>5</line_covered>
+      <line_covered>6</line_covered>
+      <line_covered>8</line_covered>
+      <line_covered>10</line_covered>
+      <line_covered>12</line_covered>
+      <line_covered>13</line_covered>
+      <line_covered>14</line_covered>
+      <line_covered>16</line_covered>
+      <line_covered>18</line_covered>
+      <line_covered>19</line_covered>
+      <line_covered>20</line_covered>
+      <line_covered>21</line_covered>
+      <line_covered>23</line_covered>
+      <line_covered>25</line_covered>
+      <line_covered>32</line_covered>
+      <line_covered>39</line_covered>
+      <line_covered>40</line_covered>
+      <line_covered>41</line_covered>
+      <line_covered>44</line_covered>
+      <line_covered>45</line_covered>
+      <line_covered>46</line_covered>
+      <line_covered>47</line_covered>
+      <line_covered>48</line_covered>
+      <line_covered>49</line_covered>
+    </covered_lines>
+    <missed_lines>
+      <line_missed>11</line_missed>
+    </missed_lines>
+  </file>
+  <file name="my_functions.py" coverage="100.00%" lines_covered="6" lines_missed="0" total_lines="6" full_path="src/my_functions.py">
+    <covered_lines>
+      <line_covered>1</line_covered>
+      <line_covered>2</line_covered>
+      <line_covered>5</line_covered>
+      <line_covered>6</line_covered>
+      <line_covered>7</line_covered>
+      <line_covered>8</line_covered>
+    </covered_lines>
+    <missed_lines />
+  </file>
+  <file name="school.py" coverage="100.00%" lines_covered="22" lines_missed="0" total_lines="22" full_path="src/school.py">
+    <covered_lines>
+      <line_covered>1</line_covered>
+      <line_covered>4</line_covered>
+      <line_covered>5</line_covered>
+      <line_covered>6</line_covered>
+      <line_covered>9</line_covered>
+      <line_covered>10</line_covered>
+      <line_covered>11</line_covered>
+      <line_covered>12</line_covered>
+      <line_covered>13</line_covered>
+      <line_covered>16</line_covered>
+      <line_covered>18</line_covered>
+      <line_covered>19</line_covered>
+      <line_covered>21</line_covered>
+      <line_covered>22</line_covered>
+      <line_covered>24</line_covered>
+      <line_covered>25</line_covered>
+      <line_covered>26</line_covered>
+      <line_covered>27</line_covered>
+      <line_covered>29</line_covered>
+      <line_covered>30</line_covered>
+      <line_covered>31</line_covered>
+      <line_covered>32</line_covered>
+    </covered_lines>
+    <missed_lines />
+  </file>
+  <file name="service.py" coverage="88.89%" lines_covered="8" lines_missed="1" total_lines="9" full_path="src/service.py">
+    <covered_lines>
+      <line_covered>1</line_covered>
+      <line_covered>3</line_covered>
+      <line_covered>9</line_covered>
+      <line_covered>13</line_covered>
+      <line_covered>14</line_covered>
+      <line_covered>15</line_covered>
+      <line_covered>16</line_covered>
+      <line_covered>18</line_covered>
+    </covered_lines>
+    <missed_lines>
+      <line_missed>10</line_missed>
+    </missed_lines>
+  </file>
+  <file name="shapes.py" coverage="93.55%" lines_covered="29" lines_missed="2" total_lines="31" full_path="src/shapes.py">
+    <covered_lines>
+      <line_covered>1</line_covered>
+      <line_covered>2</line_covered>
+      <line_covered>5</line_covered>
+      <line_covered>7</line_covered>
+      <line_covered>8</line_covered>
+      <line_covered>11</line_covered>
+      <line_covered>12</line_covered>
+      <line_covered>16</line_covered>
+      <line_covered>18</line_covered>
+      <line_covered>19</line_covered>
+      <line_covered>21</line_covered>
+      <line_covered>22</line_covered>
+      <line_covered>24</line_covered>
+      <line_covered>25</line_covered>
+      <line_covered>28</line_covered>
+      <line_covered>30</line_covered>
+      <line_covered>31</line_covered>
+      <line_covered>32</line_covered>
+      <line_covered>34</line_covered>
+      <line_covered>35</line_covered>
+      <line_covered>37</line_covered>
+      <line_covered>38</line_covered>
+      <line_covered>41</line_covered>
+      <line_covered>43</line_covered>
+      <line_covered>44</line_covered>
+      <line_covered>46</line_covered>
+      <line_covered>47</line_covered>
+      <line_covered>49</line_covered>
+      <line_covered>50</line_covered>
+    </covered_lines>
+    <missed_lines>
+      <line_missed>9</line_missed>
+      <line_missed>13</line_missed>
+    </missed_lines>
+  </file>
+  <file name="__init__.py" coverage="100.00%" lines_covered="0" lines_missed="0" total_lines="0" full_path="tests/__init__.py">
+    <covered_lines />
+    <missed_lines />
+  </file>
+</coverage>
