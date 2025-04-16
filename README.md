@@ -43,4 +43,7 @@ Run this command: "python manage.py runserver"
 Visit: http://127.0.0.1:8000
 
 
-Repository Used for Coverage and Code smell analysis: https://github.com/pypa/packaging 
+Repository Used for Coverage and Code smell analysis: 
+https://github.com/sharabhshukla/pytest-tutorial
+https://github.com/balram-vis/Python-Calculator---Unit-Testing-Code-Coverage
+
