@@ -8,23 +8,23 @@
     {% tailwind_css %}
 </head>
 <body>
-    <div class="container">
-         <!-- Messages block -->
+    <div class="w-full min-h-screen">
+          <!-- Messages block  -->
          {% if messages %}
-           <div>
-             {% for message in messages %}
-                 <div class="alert {{ message.tags }}">
-                     {{ message }}
-                 </div>
-             {% endfor %}
-           </div>
-         {% endif %}
+            <div class="w-full px-4 mt-4">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
         
-         {% if form.non_field_errors %}
+         <!-- {% if form.non_field_errors %} 
            <div class="text-red-500 text-sm mb-4">
               {{ form.non_field_errors }}
            </div>
-         {% endif %}
+         {% endif %} -->
         <!-- Main content block -->
         {% block content %}{% endblock %}
         

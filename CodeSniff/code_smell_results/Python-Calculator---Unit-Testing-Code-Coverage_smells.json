@@ -1,0 +1,15 @@
+[
+    {
+        "type": "convention",
+        "module": "calculator",
+        "obj": "",
+        "line": 48,
+        "column": 0,
+        "endLine": null,
+        "endColumn": null,
+        "path": "calculator_project/calculator.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    }
+]

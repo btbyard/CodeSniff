@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Coverage</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+
+{% include 'navbar.html' %}
+
+<div class="container mx-auto p-6">
+    <div class="flex space-x-6">
+        <div class="w-1/3 bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-2xl font-semibold mb-4">Files in {{ repo_name }}</h2>
+            <ul id="files" class="space-y-2">
+            </ul>
+        </div>
+
+        <div class="w-2/3 bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-2xl font-semibold mb-4">Coverage Chart</h2>
+            <canvas id="coverage-chart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50"></div>
+
+<div id="fileModal" class="hidden fixed inset-0 flex items-center justify-center">
+    <div class="bg-white w-4/5 max-w-3xl rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center border-b pb-2">
+            <h2 id="modalTitle" class="text-xl font-semibold">File Content</h2>
+            <button class="text-red-500 text-2xl font-bold" onclick="closeModal()">&times;</button>
+        </div>
+        <pre id="fileContent" class="bg-gray-100 p-4 mt-4 rounded-lg overflow-auto max-h-96"></pre>
+    </div>
+</div>
+
+<script>
+    const repoName = "{{ repo_name }}";
+    let chartInstance = null;
+
+    fetch(`/api/coverage/${repoName}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                renderFileList(data);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching coverage data:', error);
+            alert('Failed to load coverage data.');
+        });
+
+    function renderFileList(coverageData) {
+        const filesContainer = document.getElementById('files');
+        filesContainer.innerHTML = ""; // Clear existing content
+        coverageData.forEach((file, index) => {
+            const fileItem = document.createElement('li');
+            fileItem.classList.add('flex', 'justify-between', 'items-center', 'cursor-pointer', 'hover:bg-blue-100', 'rounded-md', 'py-2', 'px-4');
+
+            // File name (clickable for coverage)
+            const fileNameSpan = document.createElement('span');
+            fileNameSpan.textContent = file.file_name;
+            fileNameSpan.classList.add('flex-grow');
+            fileNameSpan.onclick = function() {
+                displayCoverageChart(file, index);
+            };
+
+            // "View" button (opens file content in modal)
+            const viewButton = document.createElement('button');
+            viewButton.textContent = "View";
+            viewButton.classList.add('bg-blue-500', 'text-white', 'px-3', 'py-1', 'rounded-lg', 'hover:bg-blue-600');
+            viewButton.onclick = function() {
+                fetchFileContent(file.download_url, file.file_name, file.covered_lines, file.missed_lines);
+                console.log(file.missed_lines)
+            };
+
+            fileItem.appendChild(fileNameSpan);
+            fileItem.appendChild(viewButton);
+            filesContainer.appendChild(fileItem);
+        });
+    }
+
+    function displayCoverageChart(file, index) {
+        const coveredPercent = file.coverage_percent;
+        const missedPercent = 100 - coveredPercent;
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+        var ctx = document.getElementById('coverage-chart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Covered', 'Missed'],
+                datasets: [{
+                    data: [coveredPercent, missedPercent],
+                    backgroundColor: ['#4CAF50', '#FF5722'],
+                }]
+            },
+        });
+    }
+
+    function fetchFileContent(fileUrl, fileName, coveredLines = [], missedLines = []) {
+    if (!fileUrl) {
+        alert("File URL not found.");
+        return;
+    }
+
+    fetch(fileUrl)
+        .then(response => response.json())
+        .then(data => {
+            const content = atob(data.content);
+
+            const fileLines = content.split("\n");
+            let highlightedContent = "";
+
+            fileLines.forEach((line, index) => {
+                const lineNumber = index + 1;
+                let lineClass = "";
+
+                if (coveredLines.includes(lineNumber.toString())) {
+                    lineClass = "bg-green-200";
+                } else if (missedLines.includes(lineNumber.toString())) {
+                    lineClass = "bg-red-200";
+                }
+
+                highlightedContent += `<div class="px-4 py-1 ${lineClass}"><span class="text-gray-500 mr-2">${lineNumber}</span>${escapeHtml(line)}</div>`;
+            });
+
+            document.getElementById("modalTitle").textContent = fileName;
+
+            document.getElementById("fileContent").innerHTML = highlightedContent;
+
+            document.getElementById("fileModal").classList.remove("hidden");
+            document.getElementById("overlay").classList.remove("hidden");
+        })
+        .catch(error => {
+            alert('Error fetching file content: ' + error);
+        });
+}
+
+function escapeHtml(text) {
+    // Escape special HTML characters
+    return text.replace(/[&<>"']/g, function (m) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[m];
+    });
+}
+
+    function closeModal() {
+        document.getElementById("fileModal").classList.add("hidden");
+        document.getElementById("overlay").classList.add("hidden");
+    }
+
+    // Close modal when clicking outside of it
+    document.getElementById("overlay").addEventListener("click", closeModal);
+
+    // Close modal on "Escape" key press
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") closeModal();
+    });
+</script>
+
+</body>
+</html>

@@ -1,2 +1,318 @@
-<!-- templates/home.html -->
-<h1>Welcome to the Home Page!</h1>
+{% include 'navbar.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSniff - Analyze Code Quality</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center">
+
+    <div class="flex w-full max-w-6xl mt-10">
+        <!-- Sidebar Section -->
+        <div class="w-1/3 bg-teal-500 p-6 rounded-lg shadow-md text-white">
+            <!-- Dynamic Results Header -->
+            <h2 class="text-2xl font-bold" id="repoTitle">Results for '<span id="repoName">NONE</span>'</h2>
+            <hr class="border-white my-4">
+        
+            <!-- Sidebar Navigation Links -->
+            <nav class="flex flex-col space-y-2 text-2xl">
+                <a id="viewCoverage" href="#" class="text-gray-500 pointer-events-none">No Git Repo Loaded</a>
+                <a id="viewSmells" href="#" class="text-gray-500 pointer-events-none"></a>
+                <a id="allReports" href="#" class="text-gray-500 pointer-events-none"></a>
+            </nav>
+
+            <hr class="border-white my-4">
+        
+            <h3 class="text-xl font-semibold">How it Works</h3>
+            <ul class="mt-4 space-y-2">
+                <li>✅ <strong>Enter Repository URL</strong> - Paste the GitHub repository link.</li>
+                <li>✅ <strong>Start Analysis</strong> - Click "Analyze" to check test coverage.</li>
+                <li>✅ <strong>Check The Coverage</strong> - View test coverage and code quality.</li>
+                <li>✅ <strong>Check The Sniff</strong> - View the code sniff and smells results.</li>
+            </ul>
+
+            <hr class="border-white my-4">
+
+            <h3 class="text-xl font-semibold">About us</h3>
+            <ul class="mt-4 space-y-2">
+                <li><strong>University of Michigan - Dearborn</strong> - CIS 565 Software Quality Assurance Group Project Codesniff.</li>
+                <li><strong>Project Owners</strong> - Brandon, Brad, Rehanashri, Meghana</li>
+            </ul>
+
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="w-2/3 flex flex-col items-center">
+
+            <div class="w-3/4 mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Recently Analyzed Repos</h3>
+                <ul id="recentRepos" class="list-disc list-inside text-blue-700 underline space-y-1">
+                    <!-- JS will populate this -->
+                </ul>
+            </div>
+
+            <h2 class="text-2xl italic text-gray-700 mt-4">Begin Here with your Git Repository</h2>
+
+            <div class="mt-4 w-3/4">
+                <input type="text" id="repoInput" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500" placeholder="Input Your URL">
+                <button class="w-full mt-3 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" onclick="fetchRepo()">Analyze Git Repository</button>
+            </div>
+
+            <p id="errorMessage" class="text-red-600 mt-3"></p>
+
+            <!-- Loaded Repository Files Section (Initially Hidden) -->
+            <div id="repoContainer" class="hidden w-full max-w-lg mt-6">
+                <h3 class="text-lg font-semibold">Loaded Repository Files:</h3>
+                <ul id="repoContents" class="mt-3 bg-white shadow rounded-lg p-4"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 flex justify-end w-full max-w-6xl">
+        <div class="text-right">
+            <p class="text-gray-600 font-bold">Contact Us</p>
+            <p class="text-gray-500">codesniff@gmail.com</p>
+        </div>
+    </div>
+    
+
+    <!-- Modal for Viewing File Content -->
+    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50"></div>
+    <div id="fileModal" class="hidden fixed inset-0 flex items-center justify-center">
+        <div class="bg-white w-4/5 max-w-3xl rounded-lg shadow-lg p-6">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 id="modalTitle" class="text-xl font-semibold">File Content</h2>
+                <button class="text-red-500 text-2xl font-bold" onclick="closeModal()">&times;</button>
+            </div>
+            <pre id="fileContent" class="bg-gray-100 p-4 mt-4 rounded-lg overflow-auto max-h-96"></pre>
+        </div>
+    </div>
+
+    <script>
+        
+        // Function to fetch the repository contents from GitHub
+        function fetchRepo(repoUrl = null) {
+            let inputRepoUrl = document.getElementById("repoInput").value;
+            let errorMessage = document.getElementById("errorMessage");
+            let repoContents = document.getElementById("repoContents");
+            let repoNameElement = document.getElementById("repoName");
+        
+            errorMessage.textContent = "";
+            repoContents.innerHTML = "";
+        
+            if (!repoUrl) {
+                if (!inputRepoUrl.trim()) {
+                    errorMessage.textContent = "Please enter a valid GitHub URL.";
+                    repoNameElement.textContent = "NONE"; 
+                    repoContainer.classList.add("hidden"); // Hide repository section when no repo is entered
+                    return;
+                }
+                repoUrl = inputRepoUrl;
+            }
+            
+            sendRepoDataToBackend(repoUrl);
+
+            // Extract repository name
+            let repoName = extractRepoName(repoUrl);
+            if (!repoName) {
+                errorMessage.textContent = "Invalid GitHub URL format.";
+                repoNameElement.textContent = "NONE";
+                repoContainer.classList.add("hidden"); // Hide repository section
+                return;
+            }
+        
+            // ✅ Update the sidebar repo name
+            repoNameElement.textContent = repoName;
+        
+            // ✅ Update Sidebar Links Dynamically
+            let viewCoverageLink = document.getElementById("viewCoverage");
+            let viewSmellsLink = document.getElementById("viewSmells");
+            let allReportsLink = document.getElementById("allReports");
+        
+            if (viewCoverageLink && viewSmellsLink && allReportsLink) {
+                viewCoverageLink.href = `/coverage/${repoName}/`;
+                viewSmellsLink.href = `/smells/${repoName}/`;
+                allReportsLink.href = `/reports/`;
+        
+                // Make links active and clickable
+                viewCoverageLink.classList.remove("text-gray-400", "pointer-events-none");
+                viewSmellsLink.classList.remove("text-gray-400", "pointer-events-none");
+                allReportsLink.classList.remove("text-gray-400", "pointer-events-none");
+        
+                viewCoverageLink.classList.add("text-white", "hover:underline");
+                viewSmellsLink.classList.add("text-white", "hover:underline");
+                allReportsLink.classList.add("text-white", "hover:underline");
+        
+                // ✅ Remove "No Repo" from text
+                viewCoverageLink.textContent = "📊 View Coverage";
+                viewSmellsLink.textContent = "🔍 View Smells";
+                allReportsLink.textContent = "📜 All Reports";
+            }
+        
+            fetch(`/fetch-github/?repo_url=${encodeURIComponent(repoUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        errorMessage.textContent = data.error;
+                        repoNameElement.textContent = "NONE";
+                        epoContainer.classList.add("hidden"); // Hide repository section
+                        return;
+                    }
+
+                     // Show repository section when valid data is loaded
+                    repoContainer.classList.remove("hidden");
+        
+                    data.forEach(item => {
+                        let li = document.createElement("li");
+                        li.className = "flex justify-between items-center bg-gray-200 p-2 mt-2 rounded-lg";
+                        
+                        if (item.type === "file") {
+                            li.innerHTML = `📄 ${item.name} 
+                                <button class='bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600' onclick="fetchFileContent('${item.download_url}', '${item.name}')">View</button>`;
+                        } else if (item.type === "dir") {
+                            li.innerHTML = `📂 <strong>${item.name}</strong> 
+                                <button class='bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600' onclick="fetchRepo('${item.url}')">Open</button>`;
+                        }
+        
+                        repoContents.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    errorMessage.textContent = "Error fetching repository.";
+                    repoNameElement.textContent = "NONE";
+                    repoContainer.classList.add("hidden"); // Hide repository section
+                });
+
+                 // Store last 3 repo URLs
+                 let history = JSON.parse(localStorage.getItem("repoHistory")) || [];
+                 history = history.filter(url => url !== repoUrl); // Remove duplicates
+                 history.unshift(repoUrl);                         // Add to top
+                 if (history.length > 3) history = history.slice(0, 3); // Keep only last 3
+                 localStorage.setItem("repoHistory", JSON.stringify(history));
+                 localStorage.setItem("lastRepoUrl", repoUrl); // Keep this if you still want to load last one by default
+        }
+
+        // Helper function to extract the repository name from the URL
+        function extractRepoName(url) {
+            try {
+                let match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+                return match ? match[2] : null;  // Only return the repo name, ignore the owner
+            } catch (error) {
+                return null;
+            }
+        }
+        
+        
+        function fetchFileContent(fileUrl, fileName) {
+            fetch(`/fetch-file/?file_url=${encodeURIComponent(fileUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error loading file: " + data.error);
+                        return;
+                    }
+
+                    document.getElementById("modalTitle").textContent = fileName;
+                    document.getElementById("fileContent").textContent = data.content;
+                    document.getElementById("fileModal").classList.remove("hidden");
+                    document.getElementById("overlay").classList.remove("hidden");
+                })
+                .catch(error => {
+                    alert("Error fetching file content.");
+                });
+        }
+
+        function closeModal() {
+            document.getElementById("fileModal").classList.add("hidden");
+            document.getElementById("overlay").classList.add("hidden");
+        }
+
+        function sendRepoDataToBackend(repoUrl) {
+            const loader = document.getElementById("loaderOverlay");
+            loader.style.display = "flex"; // Show loader
+            fetch(`/analyze-coverage/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    repo_url: repoUrl,  // Only send the repo URL, not individual files
+                })
+            })
+            .finally(() => {
+                console.log("inside finally")
+                 loader.style.display = "none"; // Hide loader when done
+               })
+        }
+
+        // Load saved GitHub repo on page load (if available)
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedRepoUrl = localStorage.getItem("lastRepoUrl");
+            if (savedRepoUrl) {
+                fetchRepo(savedRepoUrl);
+            }
+            // Render the last 3 repositories from local storage
+            renderRecentRepos();
+        });
+
+        // Display the last 3 repositories in the list
+        function renderRecentRepos() {
+            const history = JSON.parse(localStorage.getItem("repoHistory")) || [];
+            const recentList = document.getElementById("recentRepos");
+
+            if (!recentList) return;
+
+            // Clear old list items
+            recentList.innerHTML = "";
+
+            history.forEach(url => {
+                const li = document.createElement("li");
+                const repoName = extractRepoName(url);
+                li.innerHTML = `<a href="#" onclick="fetchRepo('${url}')">${repoName}</a>`;
+                recentList.appendChild(li);
+            });
+        }
+
+        window.onload = function () {
+    const loader = document.getElementById("loaderOverlay");
+    if (loader) {
+      loader.style.display = "none";
+    }
+  };
+
+
+    </script>
+
+</body>
+<div id="loaderOverlay" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+  <div style="
+    width: 50px;
+    height: 50px;
+    border: 6px solid #ccc;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  "></div>
+</div>
+
+<!-- Add this style block for spinner animation -->
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+</html>

@@ -122,6 +122,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# For storing uploaded files
+MEDIA_URL = '/media/'  # URL to access files via browser
+
+# Direct the uploads to specific directories inside CodeSniff/
+MEDIA_ROOT = BASE_DIR / 'CodeSniff'  # Change to your actual base directory if needed
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
